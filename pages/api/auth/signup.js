@@ -16,13 +16,23 @@ async function handler(req, res) {
     res
       .status(422)
       .json({ messege: "password should be grater than 7 characters" });
+
+    client.close();
     return;
   }
 
   const client = await connectToDatabase();
   const db = client.db();
 
+  const existingUser = await db.collection("users").findOne({ email: email });
+  if (existingUser) {
+    res.status(422).json({ messege: "Email already exists" });
+    client.close();
+    return;
+  }
+
   const hasePassword = await hasedPassword(password);
+
   db.collection("users").insertOne({
     email: email,
     password: hasePassword,
@@ -31,6 +41,7 @@ async function handler(req, res) {
   res.status(201).json({
     messege: "User Created Successfully",
   });
+  client.close();
 }
 
 export default handler;
