@@ -2,6 +2,9 @@ import { hasedPassword } from "../../../lib/auth";
 import { connectToDatabase } from "../../../lib/db";
 
 async function handler(req, res) {
+  if (req.method !== "POST") {
+    return;
+  }
   const { email, password } = req.body;
 
   if (
@@ -19,13 +22,15 @@ async function handler(req, res) {
   const client = await connectToDatabase();
   const db = client.db();
 
-  const hasedPassword = await hasedPassword(password);
+  const hasePassword = await hasedPassword(password);
   db.collection("users").insertOne({
     email: email,
-    password: hasedPassword,
+    password: hasePassword,
   });
 
   res.status(201).json({
     messege: "User Created Successfully",
   });
 }
+
+export default handler;
