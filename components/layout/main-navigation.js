@@ -5,8 +5,6 @@ import classes from "./main-navigation.module.css";
 
 function MainNavigation() {
   const { data: session, status } = useSession();
-  console.log(session);
-  console.log(status);
 
   if (status === "loading") return <h1>Loading...</h1>;
   return (
